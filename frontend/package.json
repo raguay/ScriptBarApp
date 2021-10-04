@@ -21,7 +21,7 @@
   "dependencies": {
     "@wailsapp/runtime": "^1.1.1",
     "ansi_up": "^5.0.1",
-    "sirv-cli": "^1.0.0",
-    "socketio": "^1.0.0"
+    "sirv-cli": "^1.0.14",
+    "socket.io-client": "^4.2.0"
   }
 }
