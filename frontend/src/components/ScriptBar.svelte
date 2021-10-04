@@ -350,7 +350,6 @@
   import { preferences } from '../stores/preferences.js';
   import { resizeWindow } from '../stores/resizeWindow.js';
   import { width } from '../stores/width.js';
-  import { maindom } from '../stores/maindom.js';
 
   //
   // The following components are widgets in the application and 
@@ -462,25 +461,22 @@
     $resizeWindow = resizeWindowFunction;
   });
 
-  afterUpdate(async () => {
+  afterUpdate(() => {
     if(newWidgets !== null) {
       widgets = addWidgets(newWidgets);
       newWidgets = null;
     }
-    if(mainDOM !== undefined) {
-      $maindom = mainDOM;
-    }
-    resizeWindowFunction(mainDOM);
+    resizeWindowFunction();
   });
 
-  async function resizeWindowFunction(dom) {
+  async function resizeWindowFunction() {
     await tick();
-    if(dom !== undefined) {
+    if(mainDOM !== undefined) {
       //
       // Add 10 for the header and 30 for the titlebar to get the right height.
       //
-      var nwidth = dom.clientWidth;
-      var nheight = dom.clientHeight + 40;
+      var nwidth = mainDOM.clientWidth;
+      var nheight = mainDOM.clientHeight + 40;
       if(nwidth < 100) {
         nwidth = 400;
       }
@@ -493,11 +489,10 @@
       if(showComponentMenu && (widgets.length - currentComponent < 3)) {
         nheight += 20*(widgets.length - currentComponent);
       }
-      console.log(nwidth);
-      console.log(nheight);
-      window.resizeTo(nwidth, nheight);
+      console.log('changing size...')
       $headerPosition = Math.floor(nwidth/2);
       $width = nwidth;
+      window.resizeTo(nwidth, nheight);
     }
   }
 

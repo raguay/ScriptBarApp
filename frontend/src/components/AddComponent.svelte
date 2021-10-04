@@ -87,10 +87,9 @@
 </style>
 
 <script>
-  import { createEventDispatcher, onMount, tick, afterUpdate } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { styles } from '../stores/styles.js';
-  //import { resizeWindow } from '../stores/resizeWindow.js';
-  //import { maindom } from '../stores/maindom.js';
+  import { resizeWindow } from '../stores/resizeWindow.js';
   
   export let types;
 
@@ -102,22 +101,12 @@
   let componentConfig = {};
   let componentConfigWidget = null;
   let addDialogHeight = 280;
-  let changed = false;
   
   $: componentConfigWidget = getConfigWidget(componentType);
 
   onMount(() => {
-    tick();
     componentType = types[0].moduleName;
     componentConfigWidget = getConfigWidget(componentType);
-  });
-
-  afterUpdate(async () => {
-    await $tick();
-    //if(changed && ($maindom !== undefined)) {
-    //  $resizeWindow($maindom);
-    //  changed = false;
-    //}
   });
 
   function getConfigWidget(type) {
@@ -147,6 +136,8 @@
   }
 
   function typeChanged() {
-    changed = true;
+    setTimeout(()=>{
+      $resizeWindow();
+    }, 50);
   }
 </script>

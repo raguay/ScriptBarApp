@@ -47,7 +47,6 @@
   import { resizeWindow } from '../stores/resizeWindow.js';
   import { styles } from '../stores/styles.js';
   import { socket } from '../stores/socket.js';
-  import { maindom } from '../stores/maindom.js';
   
   export let name;
   export let config;
@@ -73,7 +72,7 @@
         if((data !== null) && (typeof data.days !== 'undefined')) {
           value = data.days;
           disName = name + ': ' + data.age;
-          $resizeWindow($maindom);
+          $resizeWindow();
         }
       });
     }
@@ -105,7 +104,7 @@
                     } else {
                       disName = name;
                     }
-                    $resizeWindow($maindom);
+                    $resizeWindow();
                   }
                 })
                 .catch((err) => {

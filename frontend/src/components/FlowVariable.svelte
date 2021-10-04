@@ -38,11 +38,10 @@
 </style>
 
 <script>
-  import { createEventDispatcher, afterUpdate, onMount } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import { styles } from '../stores/styles.js';
   import { socket } from '../stores/socket.js';
   import { resizeWindow } from '../stores/resizeWindow.js';
-  import { maindom } from '../stores/maindom.js';
   
   export let name;
   export let config;
@@ -61,11 +60,7 @@
   onMount(() => {
     getData();
   })
-
-  afterUpdate(async () => {
-    $resizeWindow($maindom);
-  });
-  
+ 
   //
   // I'm using a reactive function call due to the fact that 
   // on mounting it is null and then it get's updated.
@@ -75,7 +70,7 @@
       soc.on(config.flowVar, (data) => {
         if(data !== null) {
           value = data;
-          $resizeWindow($maindom);
+          $resizeWindow();
         }
       });
     }
@@ -92,7 +87,7 @@
                   if(data !== null) {
                     if((typeof data.text !== 'undefined')&&(data.text !== null)) {
                       value = data.text;
-                      $resizeWindow($maindom);
+                      $resizeWindow();
                     }
                   }
                 });
