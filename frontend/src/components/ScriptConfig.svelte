@@ -10,6 +10,7 @@
          on:change={() => { dispatch('change',{
            script: config.script,
            env: config.env,
+           period: config.period,
            envVar: config.envVar,
            commandLine: config.commandLine,
            type: config.type,
@@ -29,6 +30,7 @@
          on:change={() => { dispatch('change',{
            script: config.script,
            env: config.env,
+           period: config.period,
            envVar: config.envVar,
            commandLine: config.commandLine,
            type: config.type,
@@ -49,6 +51,7 @@
            script: config.script,
            env: config.env,
            envVar: config.envVar,
+           period: config.period,
            commandLine: config.commandLine,
            type: config.type,
            scriptImage: config.scriptImage, 
@@ -68,6 +71,7 @@
            script: config.script,
            env: config.env,
            envVar: config.envVar,
+           period: config.period,
            commandLine: config.commandLine,
            type: config.type,
            scriptImage: config.scriptImage,
@@ -75,7 +79,28 @@
            appBackground: config.appBackground
          });}}
   />
-  <label for='Type'
+  <label for='Period'
+         class='componentLabel' >
+    How often to reload? (number of minutes)
+  </label>
+  <input id='Period'
+         type="text"
+         class="componentInput"
+         bind:value={config.period}
+         on:change={() => { dispatch('change',{
+           script: config.script,
+           env: config.env,
+           envVar: config.envVar,
+           period: config.period,
+           commandLine: config.commandLine,
+           type: config.type,
+           period: config.period,
+           scriptImage: config.scriptImage,
+           highlight: config.highlight,
+           appBackground: config.appBackground
+         });}}
+  />
+ <label for='Type'
          class='componentLabel' >
     What type of script?
   </label>
@@ -86,6 +111,7 @@
            script: config.script,
            env: config.env,
            envVar: config.envVar,
+           period: config.period,
            commandLine: config.commandLine,
            type: config.type,
            scriptImage: config.scriptImage,
@@ -112,6 +138,7 @@
              env: config.env,
              envVar: config.envVar,
              commandLine: config.commandLine,
+             period: config.period,
              type: config.type,
              scriptImage: config.scriptImage,
              highlight: config.highlight,
@@ -130,6 +157,7 @@
              script: config.script,
              env: config.env,
              envVar: config.envVar,
+             period: config.period,
              commandLine: config.commandLine,
              type: config.type,
              scriptImage: config.scriptImage,
@@ -149,6 +177,7 @@
              script: config.script,
              env: config.env,
              envVar: config.envVar,
+             period: config.period,
              commandLine: config.commandLine,
              type: config.type,
              scriptImage: config.scriptImage,
@@ -187,6 +216,7 @@
     script: "",
     env: "",
     envVar: "",
+    period: 0,
     commandLine: "",
     scriptImage: "",
     highlight: $styles.highlight,

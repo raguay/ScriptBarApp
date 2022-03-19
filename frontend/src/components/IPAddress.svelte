@@ -47,7 +47,6 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
   import { styles } from '../stores/styles.js';
-  import { socket } from '../stores/socket.js';
   
   export let name;
   export let config;
@@ -59,31 +58,10 @@
   let value = 'loading...';
   let ipaddress = '';
   
-  $: NewSocket($socket);
   $: updateWidget(index);
    
   const dispatch = createEventDispatcher();
   
-  //
-  // I'm using a reactive function call due to the fact that 
-  // on mounting it is null and then it get's updated.
-  //
-  function NewSocket(soc) {
-    if(soc !== undefined) {
-      soc.on(config.flowVar, (data) => {
-        if(data !== undefined) {
-          if(typeof data.ip !== 'undefined') {
-            value = data.ip;
-          }
-          ipaddress = 'http://' + value;
-          if(parseInt(config.port) !== 0) {
-            ipaddress += ':' + config.port;
-          }
-        }
-      });
-    }
-  }
-
   function ClickIP() {
     if(config.showLink) {
       backend.writeClipboard(ipaddress);

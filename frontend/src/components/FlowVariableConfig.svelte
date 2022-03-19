@@ -8,7 +8,21 @@
          class="componentInput"
          bind:value={config.flowVar}
          on:change={() => { dispatch('change',{
-          flowVar: config.flowVar
+           flowVar: config.flowVar,
+           period: config.period
+         });}}
+  />
+  <label for='Name'
+         class='componentLabel' >
+    How often to reload? (number of minutes)
+  </label>
+  <input id='Period'
+         type="text"
+         class="componentInput"
+         bind:value={config.period}
+         on:change={() => { dispatch('change',{
+           flowVar: config.flowVar,
+           period: config.period
          });}}
   />
 </div>

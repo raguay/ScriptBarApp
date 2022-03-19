@@ -602,17 +602,6 @@
       "sC" : 3,
       "tS" : 0
     },
-    "\/src\/stores\/socket.js" : {
-      "bF" : 0,
-      "ft" : 64,
-      "ma" : 0,
-      "mi" : 1,
-      "oA" : 0,
-      "oAP" : "\/src\/stores\/socket-min.js",
-      "oF" : 0,
-      "sC" : 3,
-      "tS" : 0
-    },
     "\/src\/stores\/styles.js" : {
       "bF" : 0,
       "ft" : 64,
@@ -620,6 +609,17 @@
       "mi" : 1,
       "oA" : 0,
       "oAP" : "\/src\/stores\/styles-min.js",
+      "oF" : 0,
+      "sC" : 3,
+      "tS" : 0
+    },
+    "\/src\/stores\/timer.js" : {
+      "bF" : 0,
+      "ft" : 64,
+      "ma" : 0,
+      "mi" : 1,
+      "oA" : 0,
+      "oAP" : "\/src\/stores\/timer-min.js",
       "oF" : 0,
       "sC" : 3,
       "tS" : 0

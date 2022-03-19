@@ -339,17 +339,16 @@
 
 <script>
   import { createEventDispatcher, onMount, afterUpdate, tick } from 'svelte';
-  import io from 'socket.io-client';
   import AddComponent from './AddComponent.svelte';
   import EditComponent from './EditComponent.svelte';
   import EditSpanField from './EditSpanField.svelte';
   import Header from './Header.svelte';
   import { styles } from '../stores/styles.js';
-  import { socket } from '../stores/socket.js';
   import { headerPosition } from '../stores/headerPosition.js';
   import { preferences } from '../stores/preferences.js';
   import { resizeWindow } from '../stores/resizeWindow.js';
   import { width } from '../stores/width.js';
+  import { timer } from '../stores/timer.js';
 
   //
   // The following components are widgets in the application and 
@@ -392,6 +391,7 @@
   let mainDOM;
   let currentContainerDOM;
   let newWidgets = null;
+  let timerId = null;
   
   const dispatch = createEventDispatcher();
 
@@ -447,18 +447,26 @@
     getWidgets();
 
     //
-    // Setup the socket.io connection to listen to.
-    //
-    if(typeof $preferences.port !== 'undefined') {
-      $socket = io.connect('http://localhost:' + $preferences.port);
-    }
-
-    //
     // Setup the window position.
     //
     window.moveTo(400,-20);
 
     $resizeWindow = resizeWindowFunction;
+
+    //
+    // Setup the timer.
+    //
+    setTimer();
+
+    // 
+    // Return a function to do cleanup when the component is removed.
+    //
+    return(() => {
+      //
+      // Clean up before removing the component.
+      //
+      if(timerId !== null) clearTimeout(timerId);
+    })
   });
 
   afterUpdate(() => {
@@ -468,6 +476,11 @@
     }
     resizeWindowFunction();
   });
+
+  function setTimer() {
+    $timer = $timer + 1;
+    timerId = setTimeout(setTimer, 60000);
+  }
 
   async function resizeWindowFunction() {
     await tick();
@@ -489,7 +502,6 @@
       if(showComponentMenu && (widgets.length - currentComponent < 3)) {
         nheight += 20*(widgets.length - currentComponent);
       }
-      console.log('changing size...')
       $headerPosition = Math.floor(nwidth/2);
       $width = nwidth;
       window.resizeTo(nwidth, nheight);

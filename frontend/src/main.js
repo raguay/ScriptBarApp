@@ -16,14 +16,6 @@ Wails.Init(() => {
     }
   });
 });
-/*
-const app = new Main({
-  target: document.body,
-  props: {
-  }
-});
-*/
-globalThis.appScriptBar = app;
 
 export default app;
 

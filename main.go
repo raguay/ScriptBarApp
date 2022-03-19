@@ -30,7 +30,7 @@ func main() {
 		JS:     js,
 		CSS:    css,
 		Colour: "rgba(0,0,0,0)",
-		Resizable: false,
+		Resizable: true,
 	})
 
 	app.Bind(writeClipboard)

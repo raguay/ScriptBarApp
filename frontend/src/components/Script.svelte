@@ -48,6 +48,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import AnsiUp from 'ansi_up';
   import { styles } from '../stores/styles.js';
+  import { timer } from '../stores/timer.js';
   
   export let name;
   export let config = {
@@ -90,10 +91,11 @@
         envVar: config.envVar,
         commandLine: config.commandLine
       });
-    fetch('http://localhost:9978/api/script/run/',{
+    fetch('http://localhost:9978/api/script/run',{
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json;charset=utf-8'
+        'Content-Type': 'application/json;charset=utf-8',
+        'Origin': '*'
       },
       body: callBody 
     })
@@ -108,6 +110,16 @@
 
   onMount(() => {
     getData();
+    var unsubtimer = timer.subscribe((val) => {
+      if((typeof config.period !== undefined)&&(config.period !== 0)) {
+        if((val % config.period) === 0) {
+          getData();
+        }
+      }
+    });
+    return(()=>{
+      unsubtimer();
+    });
   })
 
   function updateWidget(index) {
@@ -219,10 +231,7 @@
             var parts = line.split('=');
             switch(parts[0]) {
               case 'REFRESH':
-                //
-                // TODO: This case isn't currently possible. There isn't
-                //       a timer setup yet.
-                //
+                config.period = parseInt(parts[1]);
                 break;
               case 'VIEWTYPE':
                   switch(parts[1]) {

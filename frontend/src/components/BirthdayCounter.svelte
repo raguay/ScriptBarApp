@@ -46,7 +46,6 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { resizeWindow } from '../stores/resizeWindow.js';
   import { styles } from '../stores/styles.js';
-  import { socket } from '../stores/socket.js';
   
   export let name;
   export let config;
@@ -59,32 +58,14 @@
 
   const dispatch = createEventDispatcher();
 
-  $: NewSocket($socket);
   $: updateWidget(index);
   
-  //
-  // I'm using a reactive function call due to the fact that 
-  // on mounting it is null and then it get's updated.
-  //
-  function NewSocket(soc) {
-    if(soc !== null) {
-      soc.on(config.flowVar, (data) => {
-        if((data !== null) && (typeof data.days !== 'undefined')) {
-          value = data.days;
-          disName = name + ': ' + data.age;
-          $resizeWindow();
-        }
-      });
-    }
-  }
-
   onMount(() => {
     disName = name;
   })
   
   function updateWidget(index) {
     getData();
-    //dispatch('clearUpdate',{});
   }
 
   function getData() {

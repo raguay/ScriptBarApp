@@ -40,8 +40,8 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
   import { styles } from '../stores/styles.js';
-  import { socket } from '../stores/socket.js';
   import { resizeWindow } from '../stores/resizeWindow.js';
+  import { timer } from '../stores/timer.js';
   
   export let name;
   export let config;
@@ -49,52 +49,52 @@
   export let height;
   
   let dom;
+  let count = 0;
+  let tm;
 
   const dispatch = createEventDispatcher();
   
   let value = 'loading...';
 
-  $: NewSocket($socket);
   $: updateWidget(index);
   
   onMount(() => {
     getData();
+    var unsubtimer = timer.subscribe((val) => {
+      if((typeof config.period !== undefined)&&(config.period !== 0)) {
+        if((val % config.period) === 0) {
+          getData();
+        }
+      }
+    });
+    return(()=>{
+      unsubtimer();
+    });
   })
  
-  //
-  // I'm using a reactive function call due to the fact that 
-  // on mounting it is null and then it get's updated.
-  //
-  function NewSocket(soc) {
-    if(soc !== null) {
-      soc.on(config.flowVar, (data) => {
-        if(data !== null) {
-          value = data;
-          $resizeWindow();
-        }
-      });
-    }
-  }
-
   function getData() {
     //
     // Get the current value instead of waiting for the next update.
     //
     fetch('http://localhost:9978/api/nodered/var/' + config.flowVar)
-                .then((resp) => { 
-                  return resp.json();
-                }).then((data) => {
-                  if(data !== null) {
-                    if((typeof data.text !== 'undefined')&&(data.text !== null)) {
-                      value = data.text;
-                      $resizeWindow();
-                    }
-                  }
-                });
+      .then((resp) => { 
+        return resp.json();
+      }).then((data) => {
+      if(data !== null) {
+        if((typeof data.text !== 'undefined')&&(data.text !== null)) {
+          value = data.text;
+          count = 0;
+          $resizeWindow();
+        }
+      }
+    }).catch((err) => {
+      value = "not reachable: " + count;
+      setTimeout(()=>{ count++; getData(); }, 60000); 
+    });
   }
 
   function updateWidget(index) {
-    getData();
+    getData(config, value);
   }
 
   function middleButton() {

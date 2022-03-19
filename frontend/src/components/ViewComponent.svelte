@@ -36,7 +36,6 @@
 <script>
   import { createEventDispatcher, onMount, tick } from 'svelte';
   import { styles } from '../stores/styles.js';
-  import { socket } from '../stores/socket.js';
   
   export let name;
   export let config;
@@ -49,23 +48,8 @@
   
   let value = 'loading...';
 
-  $: NewSocket($socket);
   $: updateWidget(index);
   
-  //
-  // I'm using a reactive function call due to the fact that 
-  // on mounting it is null and then it get's updated.
-  //
-  function NewSocket(soc) {
-    if(soc !== null) {
-      soc.on(config.flowVar, (data) => {
-        if(data !== null) {
-          value = data;
-        }
-      });
-    }
-  }
-
   function getData() {
     //
     // Get the current value instead of waiting for the next update.
