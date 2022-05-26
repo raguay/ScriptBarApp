@@ -49,3 +49,6 @@ open ./build/bin/ScriptBar.app
 
 You must have the [EmailIt Server](https://github.com/raguay/EmailItServer) running first.
 
+## Documentation
+
+This is coming. I haven't had time to work on this yet!
