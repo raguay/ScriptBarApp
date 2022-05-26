@@ -1,4 +1,3 @@
-<Header />
 <div 
   id='main' 
   style='background-color: {$styles.appBackground};
@@ -93,13 +92,15 @@
         {/if}
       </div>
     {/if}
-    <div id="controls">
+    <div id="controls"
+      data-wails-drag
+    >
       <p id="addControl"
          on:click="{() => { openAddDialog(); }}" >
         +
       </p>
       <p id="closeControl"
-         on:click="{() => {}}" >
+         on:click="{() => { Quit(); }}" >
         X
       </p>
     </div>
@@ -152,7 +153,7 @@
   #main {
     position: absolute;
     left: 0px;
-    top: 10px;
+    top: 0px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     margin: 0px;
@@ -342,7 +343,6 @@
   import AddComponent from './AddComponent.svelte';
   import EditComponent from './EditComponent.svelte';
   import EditSpanField from './EditSpanField.svelte';
-  import Header from './Header.svelte';
   import { styles } from '../stores/styles.js';
   import { headerPosition } from '../stores/headerPosition.js';
   import { preferences } from '../stores/preferences.js';
@@ -485,11 +485,8 @@
   async function resizeWindowFunction() {
     await tick();
     if(mainDOM !== undefined) {
-      //
-      // Add 10 for the header and 30 for the titlebar to get the right height.
-      //
       var nwidth = mainDOM.clientWidth;
-      var nheight = mainDOM.clientHeight + 40;
+      var nheight = mainDOM.clientHeight;
       if(nwidth < 100) {
         nwidth = 400;
       }
@@ -504,7 +501,7 @@
       }
       $headerPosition = Math.floor(nwidth/2);
       $width = nwidth;
-      window.resizeTo(nwidth, nheight);
+      runtime.WindowSetSize(nwidth, nheight);
     }
   }
 
@@ -773,6 +770,10 @@
       delete widgets[i];
     }
     widgets = [];
+  }
+
+  function Quit() {
+    window.go.main.App.Quit();
   }
 </script>
 

@@ -1,0 +1,30 @@
+{
+  "name": "ScriptBar",
+  "frontend:build": "npm run build",
+  "frontend:install": "npm install",
+  "frontend:dev": "",
+  "wailsjsdir": "./frontend",
+  "version": "2",
+  "Path": "",
+  "BuildDir": "",
+  "outputfilename": "ScriptBarApp",
+  "OutputType": "",
+  "Platform": "",
+  "runNonNativeBuildHooks": false,
+  "postBuildHooks": null,
+  "Author": {
+    "name": "Richard Guay",
+    "email": "raguay@customct.com"
+  },
+  "Info": {
+    "companyName": "ScriptBar",
+    "productName": "ScriptBar",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright.........",
+    "comments": "Built using Wails (https://wails.app)"
+  },
+  "debounceMS": 2000,
+  "devserverurl": "http://localhost:34115",
+  "appargs": "",
+  "nsisType": ""
+}

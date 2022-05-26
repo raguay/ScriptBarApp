@@ -1,39 +1,83 @@
 package main
 
 import (
-    _ "embed"
-	"github.com/wailsapp/wails"
-  "github.com/atotto/clipboard"
+	"embed"
+	"log"
+
+	"github.com/wailsapp/wails/v2/pkg/options/mac"
+
+	"github.com/wailsapp/wails/v2"
+	"github.com/wailsapp/wails/v2/pkg/logger"
+	"github.com/wailsapp/wails/v2/pkg/options"
+	"github.com/wailsapp/wails/v2/pkg/options/windows"
 )
 
-func writeClipboard(txt string) {
-  clipboard.WriteAll(txt)
-}
+//go:embed frontend/public
+var assets embed.FS
 
-func readClipboard() string {
-	txt, _ := clipboard.ReadAll()
-	return txt
-}
-
-
-//go:embed frontend/public/bundle.js
-var js string
-
-//go:embed frontend/public/bundle.css
-var css string
+//go:embed build/appicon.png
+var icon []byte
 
 func main() {
+	// Create an instance of the app structure
+	app := NewApp()
 
-	app := wails.CreateApp(&wails.AppConfig{
-		Width:  400,
-		Height: 590,
-		JS:     js,
-		CSS:    css,
-		Colour: "rgba(0,0,0,0)",
-		Resizable: true,
+	// Create application with options
+	err := wails.Run(&options.App{
+		Title:             "ScriptBar",
+		Width:             300,
+		Height:            500,
+		MinWidth:          10,
+		MinHeight:         10,
+		MaxWidth:          1280,
+		MaxHeight:         800,
+		DisableResize:     false,
+		Fullscreen:        false,
+		Frameless:         false,
+		StartHidden:       false,
+		HideWindowOnClose: true,
+		RGBA:              &options.RGBA{R: 0, G: 0, B: 0, A: 0},
+		Assets:            assets,
+		Menu:              nil,
+		Logger:            nil,
+		LogLevel:          logger.DEBUG,
+		OnStartup:         app.startup,
+		OnDomReady:        app.domReady,
+		OnBeforeClose:     app.beforeClose,
+		OnShutdown:        app.shutdown,
+		WindowStartState:  options.Normal,
+		Bind: []interface{}{
+			app,
+		},
+		// Windows platform specific options
+		Windows: &windows.Options{
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			DisableWindowIcon:    false,
+			// DisableFramelessWindowDecorations: false,
+			WebviewUserDataPath: "",
+		},
+		Mac: &mac.Options{
+			TitleBar: &mac.TitleBar{
+				TitlebarAppearsTransparent: true,
+				HideTitle:                  true,
+				HideTitleBar:               true,
+				FullSizeContent:            false,
+				UseToolbar:                 false,
+				HideToolbarSeparator:       true,
+			},
+			Appearance:           mac.NSAppearanceNameDarkAqua,
+			WebviewIsTransparent: true,
+			WindowIsTranslucent:  true,
+			About: &mac.AboutInfo{
+				Title:   "ScriptBar",
+				Message: "A way to share script output to user.",
+				Icon:    icon,
+			},
+		},
 	})
 
-	app.Bind(writeClipboard)
-	app.Bind(readClipboard)
-	app.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
 }

@@ -1,5 +1,5 @@
-<Header />
 <div id='webview' 
+     data-wails-drag
      style='background-color: {body.config.backgroundColor};
             color: {$styles.textcolor};
             font-family: {$styles.fontFamily};
@@ -24,7 +24,7 @@
 <style>
   #webview {
     position: absolute;
-    top: 10px;
+    top: 0px;
     display: flex;
     flex-direction: column;
     margin: 0px;
@@ -52,7 +52,6 @@
 
 <script>
   import { createEventDispatcher, onMount, tick } from 'svelte';
-  import Header from './Header.svelte';
   import { styles } from '../stores/styles.js';
   import { headerPosition } from '../stores/headerPosition.js';
   import { width } from '../stores/width.js';
@@ -101,19 +100,15 @@
 
   async function resizeWindow() {
     await tick();
-    console.log(body);
     if(typeof body.config.width !== 'undefined') {
       nwidth = body.config.width;
-      nheight = body.config.height + 50;
+      nheight = body.config.height;
       $headerPosition = Math.floor(nwidth/2);
       $width = nwidth;
     } else {
       if(mainDOM !== undefined) {
-        //
-        // Add 10 for the header and 30 for the titlebar to get the right height.
-        //
-        nwidth = mainDOM.clientWidth + 10;
-        nheight = mainDOM.clientHeight + 40;
+        nwidth = mainDOM.clientWidth;
+        nheight = mainDOM.clientHeight;
         if(nwidth < 100) {
           nwidth = 400;
         }
@@ -121,7 +116,7 @@
           nheight = 40;
         }
         $width = nwidth;
-        window.resizeTo(nwidth + 20, nheight);
+        runtime.WindowSetSize(nwidth, nheight);
         $headerPosition = Math.floor(nwidth/2);
       }
     }

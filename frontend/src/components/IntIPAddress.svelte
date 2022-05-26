@@ -97,7 +97,7 @@
 
   function clickIP() {
     if(config.showLink) {
-      backend.writeClipboard(ipaddress);
+      window.go.main.App.CopyClipboard(ipaddress);
     }
   }
   

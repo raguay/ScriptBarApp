@@ -9,7 +9,6 @@
          bind:value={config.link}
          on:change={() => { dispatch('change',{
            link: config.link,
-           browser: config.browser
          });}}
   />
 </div>
@@ -38,6 +37,4 @@
   export let config;
   
   const dispatch = createEventDispatcher();
-  
-  let browserList = [];
 </script>

@@ -1,4 +1,3 @@
-import * as Wails from '@wailsapp/runtime';
 import Main from './Main.svelte';
 
 //
@@ -9,12 +8,10 @@ import Main from './Main.svelte';
 // Launch the application.
 //
 var app;
-Wails.Init(() => {
-  app = new Main({
-    target: document.body,
-    props: {
-    }
-  });
+app = new Main({
+  target: document.body,
+  props: {
+  }
 });
 
 export default app;

@@ -70,7 +70,7 @@
   // Description:  This function opens the given link in the browser specified.
   //
   function openLink() {
-    window.wails.Browser.OpenURL(config.link);
+    window.runtime.BrowserOpenURL(config.link);
   }
 
   function basename(str) {
