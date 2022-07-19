@@ -5,3 +5,7 @@
 export function CopyClipboard(arg1) {
   window['go']['main']['App']['CopyClipboard'](arg1);
 }
+
+export function Quit() {
+  window['go']['main']['App']['Quit']();
+}
