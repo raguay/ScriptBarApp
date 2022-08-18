@@ -12,6 +12,7 @@
   "Platform": "",
   "runNonNativeBuildHooks": false,
   "postBuildHooks": null,
+  "bundle_id": "com.customct.wails.ScriptBar",
   "Author": {
     "name": "Richard Guay",
     "email": "raguay@customct.com"
