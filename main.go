@@ -46,6 +46,8 @@ func main() {
 		OnBeforeClose:     app.beforeClose,
 		OnShutdown:        app.shutdown,
 		WindowStartState:  options.Normal,
+    CSSDragProperty:   "--wails-draggable",
+    CSSDragValue:      "drag",
 		Bind: []interface{}{
 			app,
 		},

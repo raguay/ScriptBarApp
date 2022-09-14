@@ -580,7 +580,7 @@
         {/if}
       </div>
     {/if}
-    <div id="controls" data-wails-drag>
+    <div id="controls">
       <p
         id="addControl"
         on:click={() => {
@@ -805,6 +805,7 @@
     height: 10px;
     margin: 0px 0px 10px 0px;
     padding: 0px;
+    --wails-draggable: drag;
   }
 
   #closeControl {
