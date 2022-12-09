@@ -22,7 +22,6 @@ To build the application, first go to the `frontend` directory and build it usin
 npm install
 npm run build
 ```
-
 The first line installs the libraries used to build the application. The second line compiles the Svelte front end. Next, you need to build the Wails app. First, install Wails by installing the prerequisites mentioned on their webiste and then run:
 
 ```sh

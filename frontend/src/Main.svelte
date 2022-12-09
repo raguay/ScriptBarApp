@@ -74,7 +74,9 @@
 
 <script>
   import { onMount } from 'svelte';
-  
+  import { variables } from './stores/variables.js';
+  import * as rt from "../wailsjs/runtime/runtime.js"; // the runtime for Wails2
+
   import ScriptBar from './components/ScriptBar.svelte';
   import WebView from './components/WebView.svelte';
 
@@ -87,7 +89,19 @@
     }
   }
   let scriptbar;
-  
+ 
+  onMount(() => {
+    rt.EventsOn("getvariable", async (msg) => {
+      rt.EventsEmit("returnvariable", $variables.getVar(msg));
+    });
+    rt.EventsOn("listvariables", async () => {
+      rt.EventsEmit("returnvariablelist", $variables.variables.map(item => item.name));
+    });
+    rt.EventsOn("setvariable", async (msg) => {
+      $variables.setVar(msg.name,msg.value);
+    });
+  });
+
   //
   // Function:    viewChange
   //

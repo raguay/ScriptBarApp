@@ -47,7 +47,9 @@
 <script>
   import { createEventDispatcher, onMount } from 'svelte';
   import { styles } from '../stores/styles.js';
-  
+  import { variables } from '../stores/variables.js';
+  import * as rt from "../../wailsjs/runtime/runtime.js"; // the runtime for Wails2
+
   export let name;
   export let config;
   export let index;
@@ -62,9 +64,9 @@
    
   const dispatch = createEventDispatcher();
   
-  function ClickIP() {
+  async function ClickIP() {
     if(config.showLink) {
-      window.go.main.App.CopyClipboard(ipaddress);
+      await rt.SetClip(ipaddress);
     }
   }
 
@@ -76,26 +78,21 @@
     //
     // Get the current value instead of waiting for the next update.
     //
-    fetch('http://localhost:9978/api/nodered/var/' + config.flowVar)
-                .then((resp) => { 
-                  return resp.json();
-                }).then((data) => {
-                  if((data !== null)&&(data.text !== null)) {
-                    if(typeof data.text.ip !== 'undefined') {
-                      value = data.text.ip;
-                    }
-                    ipaddress = 'http://' + value;
-                    if(parseInt(config.port) !== 0) {
-                      ipaddress += ':' + config.port;
-                    }
-                  } else {
-                    value = 'loading...';
-                    ipaddress = '';
-                  }
-                });
+    var data = $variables.getVar(config.flowVar);
+    if((data !== null)&&(data.ip !== "")) {
+      value = data.ip;
+      ipaddress = 'http://' + value;
+      if(parseInt(config.port) !== 0) {
+        ipaddress += ':' + config.port;
+      }
+    } else {
+      value = 'loading...';
+      ipaddress = '';
+    }
   }
 
-  onMount(() => {
+  onMount(() => { 
+    $variables.setUpVar(config.flowVar, null, () => { getData(); });
     getData();
   })
   

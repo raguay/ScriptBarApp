@@ -9,6 +9,9 @@
   import { resizeWindow } from "../stores/resizeWindow.js";
   import { width } from "../stores/width.js";
   import { timer } from "../stores/timer.js";
+  import { config } from "../stores/config.js";
+  import * as App from '../../wailsjs/go/main/App.js';
+  import * as rt from '../../wailsjs/runtime/runtime.js';
 
   //
   // The following components are widgets in the application and
@@ -22,8 +25,6 @@
   import BirthdayCounterConfig from "./BirthdayCounterConfig.svelte";
   import IPAddress from "./IPAddress.svelte";
   import IPAddressConfig from "./IPAddressConfig.svelte";
-  import IntIPAddress from "./IntIPAddress.svelte";
-  import IntIPAddressConfig from "./IntIPAddressConfig.svelte";
   import Script from "./Script.svelte";
   import ScriptConfig from "./ScriptConfig.svelte";
   import WebLink from "./WebLink.svelte";
@@ -53,11 +54,10 @@
   let mainDOM;
   let currentContainerDOM;
   let newWidgets = null;
-  let timerId = null;
 
   const dispatch = createEventDispatcher();
 
-  onMount(() => {
+  onMount(async () => {
     //
     // Create the widgetTypes structure.
     //
@@ -87,12 +87,6 @@
         configHeight: 194,
       },
       {
-        moduleName: "IntIPAddress",
-        module: IntIPAddress,
-        config: IntIPAddressConfig,
-        configHeight: 124,
-      },
-      {
         moduleName: "Script",
         module: Script,
         config: ScriptConfig,
@@ -114,7 +108,7 @@
     //
     // Get the widget list from the user's configuration.
     //
-    getWidgets();
+    await getWidgets();
 
     //
     // Setup the window position.
@@ -126,16 +120,13 @@
     //
     // Setup the timer.
     //
-    setTimer();
+    $timer.StartTimer();
 
     //
     // Return a function to do cleanup when the component is removed.
     //
     return () => {
-      //
-      // Clean up before removing the component.
-      //
-      if (timerId !== null) clearTimeout(timerId);
+        $timer.StopTimer();
     };
   });
 
@@ -147,14 +138,9 @@
     resizeWindowFunction();
   });
 
-  function setTimer() {
-    $timer = $timer + 1;
-    timerId = setTimeout(setTimer, 60000);
-  }
-
   async function resizeWindowFunction() {
     await tick();
-    if (mainDOM !== undefined) {
+    if ((mainDOM !== undefined)&&(mainDOM !== null)) {
       var nwidth = mainDOM.clientWidth;
       var nheight = mainDOM.clientHeight;
       if (nwidth < 100) {
@@ -171,7 +157,7 @@
       }
       $headerPosition = Math.floor(nwidth / 2);
       $width = nwidth;
-      runtime.WindowSetSize(nwidth, nheight);
+      rt.WindowSetSize(nwidth, nheight);
     }
   }
 
@@ -190,23 +176,21 @@
     }
   }
 
-  function getWidgets() {
+  async function getWidgets() {
     //
     // Get the configuration.
     //
-    fetch(`http://localhost:${$preferences.port}/api/scriptbar/config/`)
-      .then((resp) => {
-        return resp.json();
-      })
-      .then((data) => {
-        containers = data.config;
-        widgets = [];
-        if (typeof containers[currentContainer].widgets !== "undefined") {
-          containers[currentContainer].widgets = addWidgets(
-            containers[currentContainer].widgets
-          );
-        }
-      });
+    var homedir = await App.GetHomeDir();
+    var configPath = await App.AppendPath(homedir, ".scriptbar");
+    var configfile = await App.ReadFile(configPath);
+    $config = JSON.parse(configfile);
+    containers = $config.containers;
+    widgets = [];
+    if (typeof containers[currentContainer].widgets !== "undefined") {
+      containers[currentContainer].widgets = addWidgets(
+        containers[currentContainer].widgets
+      );
+    }
   }
 
   function switchContainer(contNum) {
@@ -214,23 +198,18 @@
     showContainerMenu = false;
     showComponentMenu = false;
     currentContainer = contNum;
+    $timer.ClearTimers();
     containers[contNum].widgets = addWidgets(containers[contNum].widgets);
   }
 
-  function saveWidgets() {
+  async function saveWidgets() {
     //
     // Save the widgets for loading latter.
     //
-    fetch(`http://localhost:${$preferences.port}/api/scriptbar/config/`, {
-      method: "PUT",
-      mode: "cors",
-      cache: "no-cache",
-      credentials: "same-origin",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ config: containers }),
-    });
+    var homedir = await App.GetHomeDir();
+    var configPath = await App.AppendPath(homedir, ".scriptbar");
+    $config.containers = containers;
+    await App.WriteFile(configPath, JSON.stringify($config));
   }
 
   function addWidgets(obj) {

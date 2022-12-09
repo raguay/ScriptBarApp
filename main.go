@@ -36,7 +36,7 @@ func main() {
 		Frameless:         false,
 		StartHidden:       false,
 		HideWindowOnClose: true,
-		RGBA:              &options.RGBA{R: 0, G: 0, B: 0, A: 0},
+		BackgroundColour:  &options.RGBA{R: 0, G: 0, B: 0, A: 0},
 		Assets:            assets,
 		Menu:              nil,
 		Logger:            nil,

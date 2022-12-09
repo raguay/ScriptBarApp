@@ -1,8 +1,9 @@
 <script>
-  import { createEventDispatcher, onMount } from "svelte";
+  import { createEventDispatcher } from "svelte";
   import AnsiUp from "ansi_up";
   import { styles } from "../stores/styles.js";
   import { timer } from "../stores/timer.js";
+  import * as App from '../../wailsjs/go/main/App.js';
 
   export let name;
   export let config = {
@@ -34,7 +35,7 @@
 
   $: updateWidget(index);
 
-  function getData() {
+  async function getData() {
     //
     // Get the current value instead of waiting for the next update.
     //
@@ -45,40 +46,13 @@
       envVar: config.envVar,
       commandLine: config.commandLine,
     });
-    fetch("http://localhost:9978/api/script/run", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json;charset=utf-8",
-        Origin: "*",
-      },
-      body: callBody,
-    })
-      .then((resp) => {
-        return resp.json();
-      })
-      .then((data) => {
-        if (data !== null) {
-          processScriptData(data);
-        }
-      });
+    let data = await App.SendHTTPQuery("PUT","http://localhost:9978/api/script/run", callBody)
+    processScriptData(JSON.parse(data));
   }
 
-  onMount(() => {
-    getData();
-    var unsubtimer = timer.subscribe((val) => {
-      if (typeof config.period !== undefined && config.period !== 0) {
-        if (val % config.period === 0) {
-          getData();
-        }
-      }
-    });
-    return () => {
-      unsubtimer();
-    };
-  });
-
-  function updateWidget(index) {
-    getData();
+  async function updateWidget(index) {
+    $timer.AddTimer(config.script, getData);
+    await getData();
     index = index;
   }
 
@@ -108,22 +82,22 @@
       // It is a generic script. No processing other than
       // creating the HTML as text paragraph.
       //
-      bodyHTML = "<p>" + data.text + "</p>";
+      bodyHTML = "<p>" + data + "</p>";
     } else if (config.type === "bitbar") {
       //
       // Process it as a BitBar script.
       //
-      bodyHTML = data.text;
+      bodyHTML = data;
     } else if (config.type === "textbar") {
       //
       // Process it as a TextBar Script.
       //
-      bodyHTML = processTextBarData(data.text);
+      bodyHTML = processTextBarData(data);
     } else if (config.type === "web") {
       //
       // The script output is html. Send it directly.
       //
-      bodyHTML = data.text;
+      bodyHTML = data;
     }
   }
 
@@ -140,8 +114,7 @@
     var longLine = "";
     var ansi_up = new AnsiUp();
     bodyConfig.showButton = true;
-    data = String(data);
-    globalThis.ScriptClick = (count, line, script, commandLine, env) => {
+    globalThis.ScriptClick = async (count, line, script, commandLine, env) => {
       var newEnv = [];
       newEnv["TEXTBAR_INDEX"] = count;
       newEnv["TEXTBAR_TEXT"] = line;
@@ -160,23 +133,13 @@
           callBody.text = commandLine;
         }
       }
-      fetch("http://localhost:9978/api/script/run/", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json;charset=utf-8",
-        },
-        body: JSON.stringify(callBody),
-      })
-        .then((resp) => {
-          return resp.json();
-        })
-        .then((data) => {
-          if (data !== null) {
-            globalThis.closeWebView();
-          }
-        });
+      const data = await App.SendHTTPQuery("PUT","http://localhost:9978/api/script/run/", JSON.stringify(callBody));
+      globalThis.closeWebView();
     };
-    data = data.split(/\r?\n/);
+    if(data[0] === '"') {
+      data = data.slice(1,-1);
+    }
+    data = data.replaceAll("\\n","\n").split(/\r?\n/);
     value = config.scriptImage + data[0];
     data.slice(1).forEach((line) => {
       if (line.trim() !== "") {

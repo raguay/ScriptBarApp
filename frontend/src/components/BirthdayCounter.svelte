@@ -46,6 +46,7 @@
   import { createEventDispatcher, onMount } from 'svelte';
   import { resizeWindow } from '../stores/resizeWindow.js';
   import { styles } from '../stores/styles.js';
+  import { variables } from '../stores/variables.js';
   
   export let name;
   export let config;
@@ -62,7 +63,8 @@
   
   onMount(() => {
     disName = name;
-  })
+    $variables.setUpVar(config.flowVar, null, () => { getData(); });
+  });
   
   function updateWidget(index) {
     getData();
@@ -72,26 +74,18 @@
     //
     // Get the current value instead of waiting for the next update.
     //
-    fetch('http://localhost:9978/api/nodered/var/' + config.flowVar)
-                .then((resp) => { 
-                  return resp.json();
-                }).then((data) => {
-                  if((data !== null) &&(data.text !== null)) {
-                    if(typeof data.text.days !== 'undefined') {
-                      value = data.text.days;
-                    }
-                    if(typeof data.text.age !== 'undefined') {
-                      disName = name + ': ' + data.text.age;
-                    } else {
-                      disName = name;
-                    }
-                    $resizeWindow();
-                  }
-                })
-                .catch((err) => {
-                  disName = name;
-                  value = "not reachable";
-                });
+    const data = $variables.getVar(config.flowVar);
+    if((data !== null) && (typeof data.text !== 'undefined')) {
+      if(typeof data.days !== 'undefined') {
+        value = data.days;
+      }
+      if(typeof data.age !== 'undefined') {
+        disName = name + ': ' + data.age;
+      } else {
+        disName = name;
+      }
+      $resizeWindow();
+    }
   }
   
   function middleButton() {

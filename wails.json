@@ -20,8 +20,8 @@
   "Info": {
     "companyName": "ScriptBar",
     "productName": "ScriptBar",
-    "productVersion": "1.0.0",
-    "copyright": "Copyright.........",
+    "productVersion": "1.1.0",
+    "copyright": "Copyright Richard Guay <raguay@customct.com>",
     "comments": "Built using Wails (https://wails.app)"
   },
   "debounceMS": 2000,
