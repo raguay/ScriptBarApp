@@ -31,9 +31,9 @@ func main() {
 		MinHeight:         10,
 		MaxWidth:          1280,
 		MaxHeight:         800,
-		DisableResize:     false,
+		DisableResize:     true,
 		Fullscreen:        false,
-		Frameless:         false,
+		Frameless:         true,
 		StartHidden:       false,
 		HideWindowOnClose: true,
 		BackgroundColour:  &options.RGBA{R: 0, G: 0, B: 0, A: 0},
@@ -46,8 +46,8 @@ func main() {
 		OnBeforeClose:     app.beforeClose,
 		OnShutdown:        app.shutdown,
 		WindowStartState:  options.Normal,
-    CSSDragProperty:   "--wails-draggable",
-    CSSDragValue:      "drag",
+		CSSDragProperty:   "--wails-draggable",
+		CSSDragValue:      "drag",
 		Bind: []interface{}{
 			app,
 		},
@@ -70,7 +70,7 @@ func main() {
 			},
 			Appearance:           mac.NSAppearanceNameDarkAqua,
 			WebviewIsTransparent: true,
-			WindowIsTranslucent:  true,
+			WindowIsTranslucent:  false,
 			About: &mac.AboutInfo{
 				Title:   "ScriptBar",
 				Message: "A way to share script output to user.",
@@ -78,7 +78,6 @@ func main() {
 			},
 		},
 	})
-
 	if err != nil {
 		log.Fatal(err)
 	}

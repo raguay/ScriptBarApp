@@ -5,7 +5,6 @@
   import EditSpanField from "./EditSpanField.svelte";
   import { styles } from "../stores/styles.js";
   import { headerPosition } from "../stores/headerPosition.js";
-  import { preferences } from "../stores/preferences.js";
   import { resizeWindow } from "../stores/resizeWindow.js";
   import { width } from "../stores/width.js";
   import { timer } from "../stores/timer.js";
@@ -32,7 +31,6 @@
 
   export let oldState;
 
-  let appBaseHeight = 72; // This is the height of everything but the widgets.
   let containers = [
     {
       name: "Info",
@@ -642,12 +640,13 @@
 <style>
   #main {
     position: absolute;
-    left: 0px;
-    top: 0px;
+    left: 1px;
+    top: 1px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     margin: 0px;
     padding: 5px;
+    border: 0px transparent;
     border-radius: 10px;
     display: flex;
     flex-direction: column;

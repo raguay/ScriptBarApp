@@ -5,7 +5,9 @@
             font-family: {$styles.fontFamily};
             font-size: {$styles.fontSize};
             width: {nwidth}px;
-            height: {nheight}px;'
+            height: {nheight}px;
+            max-width: {$config.mwidth}px;
+            max-height: {$config.mheight}px;'
     bind:this={mainDOM}
 >
   {@html body.html}
@@ -29,8 +31,9 @@
     flex-direction: column;
     margin: 0px;
     padding: 5px;
+    border: 1px solid transparent;
     border-radius: 10px;
-    overflow-wrap: anywhere;
+    overflow-wrap: auto;
   }
 
   #buttonRow {
@@ -55,6 +58,8 @@
   import { styles } from '../stores/styles.js';
   import { headerPosition } from '../stores/headerPosition.js';
   import { width } from '../stores/width.js';
+  import { config } from '../stores/config.js';
+  import * as rt from "../../wailsjs/runtime/runtime.js"; // the runtime for Wails2
 
   export let body;
 
@@ -116,7 +121,7 @@
           nheight = 40;
         }
         $width = nwidth;
-        runtime.WindowSetSize(nwidth, nheight);
+        rt.WindowSetSize(nwidth, nheight);
         $headerPosition = Math.floor(nwidth/2);
       }
     }

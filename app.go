@@ -13,6 +13,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	goruntime "runtime"
+	"strings"
 	"time"
 
 	clip "github.com/atotto/clipboard"
@@ -88,7 +89,7 @@ type ServerResponce struct {
 
 func (a *App) SendHTTPQuery(method string, uri string, body string) string {
 	var result string
-	switch method {
+	switch strings.Trim(method, " ") {
 	case "GET":
 		{
 			resp, err := http.Get(uri)
@@ -118,29 +119,23 @@ func (a *App) SendHTTPQuery(method string, uri string, body string) string {
 		}
 	case "PUT":
 		{
-			fmt.Print("\n\nPUT request\n\n")
 			client := http.Client{}
 
 			// regardless of GET or POST, we can safely add the body
-			fmt.Print("\n", body)
 			req, err := http.NewRequest("PUT", uri, bytes.NewBuffer([]byte(body+"\n")))
 			if err != nil {
-				fmt.Print(err.Error())
 				return err.Error()
 			}
-			fmt.Print("\nCreate the headers...")
 			headers := map[string]string{}
 			headers["Method"] = "PUT"
 			headers["Content-Type"] = "application/json"
 
 			// for each header passed, add the header value to the request
-			fmt.Print("\nSet the headers...")
 			for k, v := range headers {
 				req.Header.Set(k, v)
 			}
 
 			// finally, do the request
-			fmt.Print("\nSend the request...")
 			res, err := client.Do(req)
 			if err != nil {
 				return err.Error()
@@ -150,7 +145,6 @@ func (a *App) SendHTTPQuery(method string, uri string, body string) string {
 				return fmt.Sprint("error: calling %s returned empty response", uri)
 			}
 
-			fmt.Print("\nGet the response...")
 			responseData, err := io.ReadAll(res.Body)
 			if err != nil {
 				return err.Error()
@@ -165,7 +159,6 @@ func (a *App) SendHTTPQuery(method string, uri string, body string) string {
 			result = string(responseData)
 		}
 	}
-	fmt.Print("\nReturn result: ", result)
 	return result
 }
 

@@ -1,30 +1,39 @@
 <svelte:window on:blur="{() => {}}" 
                on:close="{() => {}}" />
 
-{#if view === 'scriptbar'}
-  <ScriptBar 
-    oldState={scriptbar}
-    on:changeView={(e) => {viewChange(e.detail);}}
-  />
-{:else if view === 'webview'}
-  <WebView
-    body={body}
-    on:changeView={(e) => {viewChange(e.detail);}}
-  />
-{:else}
-  <div id='errorPage'>
-    <h1>Something went wrong</h1>
-    <p>Sorry, but you somehow got to a place that isn't reachable.</p>
-    <p>Press be button below to get back to the normal page.</p>
-    <button
-      on:click={() => { view = 'scriptbar'}}
-    >
-      Go Back
-    </button>
-  </div>
-{/if}
+<div id="app">
+	{#if view === 'scriptbar'}
+	  <ScriptBar 
+	    oldState={scriptbar}
+	    on:changeView={(e) => {viewChange(e.detail);}}
+	  />
+	{:else if view === 'webview'}
+	  <WebView
+	    body={body}
+	    on:changeView={(e) => {viewChange(e.detail);}}
+	  />
+	{:else}
+	  <div id='errorPage'>
+	    <h1>Something went wrong</h1>
+	    <p>Sorry, but you somehow got to a place that isn't reachable.</p>
+	    <p>Press be button below to get back to the normal page.</p>
+	    <button
+	      on:click={() => { view = 'scriptbar'}}
+	    >
+	      Go Back
+	    </button>
+	  </div>
+	{/if}
+</div>
 
 <style>
+  #app {
+    margin: 0px;
+    padding: 0px;
+    border: 0px solid transparent;
+    background-color: transparent;
+  }
+
   #errorPage {
     display: flex;
     flex-direction: column;
@@ -49,10 +58,18 @@
     background-color: rgba(255, 255, 255, 0.3);
   }
 
+  :global(app) {
+    background-color: transparent;
+    border: 0px solid transparent;
+    border-radius: 10px;
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+  }
+
   :global(body) {
     margin: 0px;
     padding: 0px;
-    border: 0px;
     background-color: transparent;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -68,7 +85,6 @@
     border: 0px solid transparent;
     border-radius: 10px;
     overflow: hidden;
-    box-shadow: transparent;
   }
 </style>
 

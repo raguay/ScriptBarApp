@@ -22,6 +22,12 @@ var timerObj = {
   },
   StartTimer: function () {
     //
+    // Set the next timer.
+    //
+    //timerObj.TimerId = setTimeout(timerObj.NextTime, 60000);
+  },
+  NextTime: function () {
+    //
     // Increment the timer.
     //
     timerObj.time = timerObj.time + 1;
@@ -38,7 +44,7 @@ var timerObj = {
     //
     // Set the next timer.
     //
-    timerObj.TimerId = setTimeout(timerObj.StartTimer, 60000);
+    timerObj.TimerId = setTimeout(timerObj.NextTime, 60000);
   },
   StopTimer: function () {
     if (timerObj.TimerId !== null) {

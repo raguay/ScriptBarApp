@@ -116,13 +116,16 @@
     bodyConfig.showButton = true;
     globalThis.ScriptClick = async (count, line, script, commandLine, env) => {
       var newEnv = [];
-      newEnv["TEXTBAR_INDEX"] = count;
-      newEnv["TEXTBAR_TEXT"] = line;
+      newEnv.push(`TEXTBAR_INDEX=${count}`);
+      newEnv.push(`TEXTBAR_TEXT="${line}"`);
       var callBody = {
         script: script.trim(),
         env: env.trim(),
-        envVar: { ...newEnv },
+        envVar: newEnv,
       };
+      if(typeof config.envVar !== 'undefined') {
+        callBody.envVar = [...config.envVar, ...callBody.envVar];
+      }
       if (
         typeof commandLine !== "undefined" &&
         !commandLine.includes("undefined")
@@ -219,7 +222,8 @@
             //
             pline = line
               .replace(/\\e/g, "")
-              .replace(/\[\d+((\:|\;)\d+)*m/g, "");
+              .replace(/\[\d+((\:|\;)\d+)*m/g, "")
+              .replace("\t","");
           } else {
             //
             // No ANSI codes, process as a plain text line.
@@ -247,7 +251,7 @@
               "</p>";
           } else {
             resultText += `<p style="margin: 0px; padding: 0px 0px 0px 5px; height: 20px; border: 0px solid transparent; border-radius: 5px; white-space: nowrap;" 
-                              onclick="globalThis.ScriptClick(${count},'${line}','${config.script}', '${config.commandLine}', '${config.env}')"
+                              onclick="globalThis.ScriptClick(${count},'${pline}','${config.script}', '${config.commandLine}', '${config.env}')"
                               onmouseenter="window.setLineColorNew(this)"
                               onmouseleave="window.setLineColor(this)"
                               onblur="window.setLineColor(this)"
