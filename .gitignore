@@ -11,3 +11,4 @@ ExternalScriptTest
 
 # The black hole that is...
 node_modules
+package-lock.json

@@ -1,39 +1,30 @@
 <svelte:window on:blur="{() => {}}" 
                on:close="{() => {}}" />
 
-<div id="app">
-	{#if view === 'scriptbar'}
-	  <ScriptBar 
-	    oldState={scriptbar}
-	    on:changeView={(e) => {viewChange(e.detail);}}
-	  />
-	{:else if view === 'webview'}
-	  <WebView
-	    body={body}
-	    on:changeView={(e) => {viewChange(e.detail);}}
-	  />
-	{:else}
-	  <div id='errorPage'>
-	    <h1>Something went wrong</h1>
-	    <p>Sorry, but you somehow got to a place that isn't reachable.</p>
-	    <p>Press be button below to get back to the normal page.</p>
-	    <button
-	      on:click={() => { view = 'scriptbar'}}
-	    >
-	      Go Back
-	    </button>
-	  </div>
-	{/if}
-</div>
+{#if view === 'scriptbar'}
+  <ScriptBar 
+    oldState={scriptbar}
+    on:changeView={(e) => {viewChange(e.detail);}}
+  />
+{:else if view === 'webview'}
+  <WebView
+    body={body}
+    on:changeView={(e) => {viewChange(e.detail);}}
+  />
+{:else}
+  <div id='errorPage'>
+    <h1>Something went wrong</h1>
+    <p>Sorry, but you somehow got to a place that isn't reachable.</p>
+    <p>Press be button below to get back to the normal page.</p>
+    <button
+      on:click={() => { view = 'scriptbar'}}
+    >
+      Go Back
+    </button>
+  </div>
+{/if}
 
 <style>
-  #app {
-    margin: 0px;
-    padding: 0px;
-    border: 0px solid transparent;
-    background-color: transparent;
-  }
-
   #errorPage {
     display: flex;
     flex-direction: column;
@@ -56,15 +47,6 @@
     -webkit-tap-highlight-color: transparent;
     outline-style:none;
     background-color: rgba(255, 255, 255, 0.3);
-  }
-
-  :global(app) {
-    background-color: transparent;
-    border: 0px solid transparent;
-    border-radius: 10px;
-    margin: 0px;
-    padding: 0px;
-    overflow: hidden;
   }
 
   :global(body) {

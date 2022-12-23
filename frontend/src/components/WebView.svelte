@@ -1,5 +1,4 @@
 <div id='webview' 
-     data-wails-drag
      style='background-color: {body.config.backgroundColor};
             color: {$styles.textcolor};
             font-family: {$styles.fontFamily};
@@ -25,15 +24,15 @@
 
 <style>
   #webview {
-    position: absolute;
-    top: 0px;
     display: flex;
     flex-direction: column;
     margin: 0px;
     padding: 5px;
-    border: 1px solid transparent;
+    border: 10px solid transparent;
     border-radius: 10px;
+    overflow: scroll;
     overflow-wrap: auto;
+    --wails-draggable: drag;
   }
 
   #buttonRow {
@@ -73,6 +72,7 @@
 
   onMount(() => {
     globalThis.closeWebView = close;
+    $width = bodyChange(body);
     resizeWindow();
     window.setLineColor = setLineColor;
     window.setLineColorNew = setLineColorNew;
@@ -104,6 +104,7 @@
   }
 
   async function resizeWindow() {
+    console.log("resizeWindow: ",$config);
     await tick();
     if(typeof body.config.width !== 'undefined') {
       nwidth = body.config.width;
@@ -114,15 +115,23 @@
       if(mainDOM !== undefined) {
         nwidth = mainDOM.clientWidth;
         nheight = mainDOM.clientHeight;
+        console.log("resizeWindow: ", mainDOM.clientWidth, mainDOM.clientHeight);
         if(nwidth < 100) {
           nwidth = 400;
         }
         if(nheight < 40) {
           nheight = 40;
         }
-        $width = nwidth;
-        rt.WindowSetSize(nwidth, nheight);
-        $headerPosition = Math.floor(nwidth/2);
+        if(nheight > $config.mheight) {
+          nheight = $config.mheight;
+        }
+        if(nwidth > $config.mwidth) {
+          nwidth = $config.mwidth;
+        }
+        $width = nwidth + 6;
+        console.log("resizeWindow: ", nwidth, nheight, $width);
+        rt.WindowSetSize(nwidth+6, nheight+6);
+        $headerPosition = Math.floor($width/2);
       }
     }
   }
