@@ -139,8 +139,8 @@
   async function resizeWindowFunction() {
     await tick();
     if ((mainDOM !== undefined)&&(mainDOM !== null)) {
-      var nwidth = mainDOM.clientWidth;
-      var nheight = mainDOM.clientHeight;
+      var nwidth = mainDOM.offsetWidth;
+      var nheight = mainDOM.offsetHeight;
       if (nwidth < 100) {
         nwidth = 400;
       }

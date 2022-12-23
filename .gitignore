@@ -5,6 +5,7 @@ build/windows/installer/wails_tools.nsh
 build/windows/installer/tmp/
 ExternalScriptTest
 
+frontend/dist
 # IDEs
 .idea
 .vscode

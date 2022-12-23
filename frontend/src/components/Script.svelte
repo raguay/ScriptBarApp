@@ -314,7 +314,7 @@
   </span>
   <span
     class="scriptValue"
-    on:click={(e) => {
+    on:click={() => {
       sendWebView();
     }}
   >

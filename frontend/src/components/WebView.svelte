@@ -3,13 +3,16 @@
             color: {$styles.textcolor};
             font-family: {$styles.fontFamily};
             font-size: {$styles.fontSize};
-            width: {nwidth}px;
-            height: {nheight}px;
             max-width: {$config.mwidth}px;
             max-height: {$config.mheight}px;'
     bind:this={mainDOM}
->
-  {@html body.html}
+  >
+  <div
+    id='htmlbody'
+    bind:this={htmlDOM}
+  >
+    {@html body.html}
+  </div>
   {#if body.config.showButton}
     <div id='buttonRow'>
       <button id="closeButton"
@@ -24,21 +27,29 @@
 
 <style>
   #webview {
+    position: absolute;
+    top: 0px;
+    left: 0px;
     display: flex;
     flex-direction: column;
     margin: 0px;
-    padding: 5px;
-    border: 10px solid transparent;
+    padding: 10px;
+    border: 1px solid transparent;
     border-radius: 10px;
-    overflow: scroll;
-    overflow-wrap: auto;
+    overflow: hidden;
     --wails-draggable: drag;
+  }
+
+  #htmlbody {
+    padding: 5px;
+    margin: 0px;
+    overflow: auto;
   }
 
   #buttonRow {
     display: flex;
     flex-direction: row;
-    margin: 0px;
+    margin: 0px 0px 5px 0px;
     padding: 0px;
   }
 
@@ -46,14 +57,14 @@
     border-radius: 5px;
     height: 30px;
     outline: none;
-    margin: 10px auto 10px auto;
+    margin: 5px auto;
     user-select: none;
     outline-style: none;
   }
 </style>
 
 <script>
-  import { createEventDispatcher, onMount, tick } from 'svelte';
+  import { createEventDispatcher, onMount, tick, afterUpdate } from 'svelte';
   import { styles } from '../stores/styles.js';
   import { headerPosition } from '../stores/headerPosition.js';
   import { width } from '../stores/width.js';
@@ -63,19 +74,22 @@
   export let body;
 
   let mainDOM;
+  let htmlDOM;
   let nwidth;
   let nheight;
+  let oldheight = 0;
+  let oldwidth = 0;
 
   const dispatch = createEventDispatcher();
 
-  $: $width = bodyChange(body);
-
   onMount(() => {
     globalThis.closeWebView = close;
-    $width = bodyChange(body);
-    resizeWindow();
     window.setLineColor = setLineColor;
     window.setLineColorNew = setLineColorNew;
+  });
+
+  afterUpdate(async () => {
+    await resizeWindow();
   });
 
   function setLineColorNew(e) {
@@ -90,11 +104,6 @@
     }
   }
 
-  function bodyChange(bod) {
-    resizeWindow();
-    return($width);
-  }
-
   function close() {
     dispatch('changeView',{
       name: 'scriptbar',
@@ -104,7 +113,7 @@
   }
 
   async function resizeWindow() {
-    console.log("resizeWindow: ",$config);
+    await rt.WindowSetSize($config.mwidth, $config.mheight);
     await tick();
     if(typeof body.config.width !== 'undefined') {
       nwidth = body.config.width;
@@ -113,25 +122,29 @@
       $width = nwidth;
     } else {
       if(mainDOM !== undefined) {
-        nwidth = mainDOM.clientWidth;
-        nheight = mainDOM.clientHeight;
-        console.log("resizeWindow: ", mainDOM.clientWidth, mainDOM.clientHeight);
-        if(nwidth < 100) {
-          nwidth = 400;
+        nwidth = mainDOM.offsetWidth;
+        nheight = mainDOM.offsetHeight;
+        if((oldheight !== nheight) || (oldwidth !== nwidth)) {
+          oldheight = nheight;
+          oldwidth = nwidth;
+          if(nwidth < 100) {
+            nwidth = 400;
+          }
+          if(nheight < 40) {
+            nheight = 40;
+          }
+          if(nheight > $config.mheight) {
+            nheight = $config.mheight;
+            htmlDOM.style.height = `${nheight-80}px`;
+          }
+          if(nwidth > $config.mwidth) {
+            nwidth = $config.mwidth;
+            htmlDOM.style.width = `${nwidth-41}px`;
+          }
+          $width = nwidth + 6;
+          rt.WindowSetSize(nwidth+6, nheight+6);
+          $headerPosition = Math.floor($width/2);
         }
-        if(nheight < 40) {
-          nheight = 40;
-        }
-        if(nheight > $config.mheight) {
-          nheight = $config.mheight;
-        }
-        if(nwidth > $config.mwidth) {
-          nwidth = $config.mwidth;
-        }
-        $width = nwidth + 6;
-        console.log("resizeWindow: ", nwidth, nheight, $width);
-        rt.WindowSetSize(nwidth+6, nheight+6);
-        $headerPosition = Math.floor($width/2);
       }
     }
   }
